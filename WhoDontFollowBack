@@ -1,0 +1,135 @@
+import time
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+
+class Instagram:
+
+    def __init__(self, username, password):
+
+        PATH = "C:\Program Files (x86)\chromedriver.exe"
+        self.browser = webdriver.Chrome(PATH)
+        self.username = username
+        self.password = password
+
+    def signin(self):
+
+        self.browser.get("https://instagram.com/accounts/login")
+        time.sleep(2)
+        user = self.browser.find_element_by_name("username")
+        password = self.browser.find_element_by_name("password")
+
+        user.send_keys(self.username)
+        password.send_keys(self.password)
+        login = self.browser.find_element_by_xpath('/html/body/div[1]/section/main/div/div/div[1]/div/form/div/div[3]/button/div')
+        login.click()
+        time.sleep(2)
+
+    def dontsaveinformation(self):
+
+        time.sleep(2)
+        dontsaveinfo = self.browser.find_element_by_xpath('/html/body/div[1]/section/main/div/div/div/div/button')
+        dontsaveinfo.click()
+
+        time.sleep(2)
+        dontturnonnotifications = self.browser.find_element_by_xpath('/html/body/div[4]/div/div/div/div[3]/button[2]')
+        dontturnonnotifications.click()
+
+        time.sleep(2)
+        profile = self.browser.find_element_by_xpath('/html/body/div[1]/section/main/section/div[3]/div[1]/div/div/div[2]/div[1]/div/div/a')
+        profile.click()
+
+    def pullingfollowerslist(self):
+
+        time.sleep(2)
+        followersbutton = self.browser.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[2]/a')
+        followersbutton.click()
+
+        time.sleep(2)
+        a = self.browser.find_element_by_class_name("isgrP")
+        followerscount = len(a.find_elements_by_tag_name("li"))
+        jscommand = self.browser.execute_script("return page=document.querySelector('.isgrP')")
+
+        while True:
+            time.sleep(2)
+            self.browser.execute_script("page.scrollTo(0,page.scrollHeight);")
+            time.sleep(3)
+            newcounter = len(a.find_elements_by_tag_name("li"))
+            if followerscount == newcounter:
+                break
+            else:
+                followerscount = newcounter
+
+            b = a.find_elements_by_tag_name("li")
+            followerslist = []
+            for i in b:
+                followerLinks = i.find_element_by_tag_name("a").get_attribute("href")
+                followerslist.append(followerLinks)
+
+
+            counter = 1
+            for i in followerslist:
+                print(f"{counter} {i}")
+                counter += 1
+
+            time.sleep(2)
+
+
+        time.sleep(2)
+        cross = self.browser.find_element_by_xpath('/html/body/div[5]/div/div/div[1]/div/div[2]/button')
+        cross.click()
+
+    def pullingfollowingslist(self):
+
+        time.sleep(2)
+        followingbutton = self.browser.find_element_by_xpath('/html/body/div[1]/section/main/div/header/section/ul/li[3]/a')
+        followingbutton.click()
+
+        c = self.browser.find_element_by_class_name("isgrP")
+        followingcount = len(c.find_elements_by_tag_name("li"))
+        jscommand2 = self.browser.execute_script("return page2 = document.querySelector('.isgrP')")
+
+        while True:
+            time.sleep(2)
+            self.browser.execute_script("page2.scrollTo(0,page2.scrollHeight);")
+            time.sleep(3)
+            newcounter2 = len(c.find_elements_by_tag_name("li"))
+            if followingcount == newcounter2:
+                break
+            else:
+                followingcount = newcounter2
+
+            d = c.find_elements_by_tag_name("li")
+            followinglist = []
+
+            for j in d:
+                followingLinks = j.find_element_by_tag_name("a").get_attribute("href")
+                followinglist.append(followingLinks)
+
+            counter2 = 1
+            for j in followinglist:
+                print(f"{counter2} {j}")
+                counter2 += 1
+            time.sleep(2)
+
+
+        time.sleep(2)
+        close = self.browser.find_element_by_xpath('/html/body/div[5]/div/div/div[1]/div/div[2]/button')
+        close.click()
+
+
+    def followmeback(self):
+        set1 = set()
+        set2 = set()
+        set1 = set(self.followinglist)
+        set2 = set(self.followerslist)
+        print(set1.difference(set2))
+
+
+
+
+user = Instagram("uranium.colliery", "domates1suyu1")
+user.signin()
+user.dontsaveinformation()
+user.pullingfollowerslist()
+user.pullingfollowingslist()
+user.followmeback()
